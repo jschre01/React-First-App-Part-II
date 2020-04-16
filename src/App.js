@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import Table from './Table'
 import Form from './Form'
+import axios from 'axios';
 
 class App extends Component {
   state = {
@@ -27,6 +28,16 @@ class App extends Component {
   }
   handleSubmit = character => {
     this.setState({ characters: [...this.state.characters, character] })
+  }
+  componentDidMount() {
+     axios.get('http://localhost:5000/users')
+       .then(res => {
+         const characters = res.data.users_list;
+         this.setState({ characters });
+       })
+       .catch(function (error) {
+         console.log(error);
+       })
   }
 }
 
