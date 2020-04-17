@@ -18,8 +18,18 @@ class App extends Component {
     )
   }
   removeCharacter = index => {
-    const { characters } = this.state
+    var id;
+    id = this.state.characters[index].id;
+    axios.delete('http://localhost:5000/users/' + id)
+    .then(function (response){
+        console.log(response);
+        return (response.status === 200);
+    })
+    .catch(function (error) {
+        console.log(error);
+    })
 
+    const { characters } = this.state
     this.setState({
       characters: characters.filter((character, i) => {
         return i !== index
@@ -27,7 +37,21 @@ class App extends Component {
     })
   }
   handleSubmit = character => {
-    this.setState({ characters: [...this.state.characters, character] })
+      this.makePostCall(character).then( callResult => {
+         if(callResult.status === 201){
+            this.setState({ characters: [...this.state.characters, callResult.data] });
+    }
+  })
+ }
+  makePostCall(character){
+     return axios.post('http://localhost:5000/users', character)
+      .then(function (response) {
+        console.log(response);
+        return response;
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
   }
   componentDidMount() {
      axios.get('http://localhost:5000/users')
